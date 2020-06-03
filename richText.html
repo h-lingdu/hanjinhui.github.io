@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./js/ueditor/ueditor.config.js"></script>
+    <script src="./js/ueditor/_examples/editor_api.js"></script>
+    <script src="./js/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <!-- 在editor_api.js文件中修改 baseURL = '../hanjinhui.github.io/js/ueditor/_src/'; -->
+    <title>富文本编辑框ueditor</title>
+</head>
+<body>
+    <!-- <textarea placeholder="请输入" name="container" id="container" cols="120" rows="30"></textarea> -->
+    <script id="container" name="content" type="text/plain">
+        这里写你的初始化内容
+    </script>
+
+    <script>
+        var ue = UE.getEditor('container')
+    </script>
+</body>
+</html>
