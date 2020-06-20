@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旋转时钟</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background: #000;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .main {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-top: -100px;
+            margin-left: -100px;
+        }
+
+        .main div {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            top: 0;
+            left: 0;
+            border-radius: 100%;
+            transition: 0.5s;
+        }
+
+        span {
+            width: 50px;
+            height: 18px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            text-align: right;
+            margin-top: -9px;
+            margin-left: -25px;
+        }
+
+        .active {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div class="yearbox"></div>
+        <div class="monthbox"></div>
+        <div class="datebox"></div>
+        <div class="hourbox"></div>
+        <div class="minutebox"></div>
+        <div class="secondbox"></div>
+    </div>
+
+
+    <script>
+        let yearbox = document.querySelector('.yearbox');
+        let monthbox = document.querySelector('.monthbox');
+        let datebox = document.querySelector('.datebox');
+        let hourbox = document.querySelector('.hourbox');
+        let minutebox = document.querySelector('.minutebox');
+        let secondbox = document.querySelector('.secondbox');
+
+
+        /*
+        创建时间圆
+            tag: span标签
+            total: span总数
+            num: 当前span索引
+            radius: 半径
+        */
+        function createRound(tag, total, num, radius) {
+            tag.style.transform = `rotate(${360 / total * (num - 1)}deg) translateX(${radius}px)`
+        }
+        //年
+        function initYear(year) {
+            let span = document.createElement("span");
+            span.innerHTML = year + "年";
+            span.className = 'active'
+            yearbox.appendChild(span);
+        };
+        //月
+        function initMonth() {
+            for (let i = 1; i <= 12; i++) {
+                let span = document.createElement("span");
+                span.innerHTML = i + "月";
+                createRound(span, 12, i, 40);
+                monthbox.appendChild(span);
+            }
+        };
+        //日
+        function initDate() {
+            for (let i = 1; i <= 31; i++) {
+                let span = document.createElement("span");
+                span.innerHTML = i + "日";
+                createRound(span, 31, i, 80);
+                datebox.appendChild(span);
+            }
+        };
+        //时
+        function initHour() {
+            for (let i = 0; i <= 23; i++) {
+                let span = document.createElement("span");
+                span.innerHTML = (i < 10 ? '0' + i : i) + "时";
+                createRound(span, 24, i, 120);
+                hourbox.appendChild(span);
+            }
+        };
+        //分
+        function initMinute() {
+            for (let i = 0; i <= 59; i++) {
+                let span = document.createElement("span");
+                span.innerHTML = (i < 10 ? '0' + i : i) + "分";
+                createRound(span, 60, i, 160);
+                minutebox.appendChild(span);
+            }
+        };
+        //秒
+        function initSecond() {
+            for (let i = 0; i <= 59; i++) {
+                let span = document.createElement("span");
+                span.innerHTML = (i < 10 ? '0' + i : i) + "秒";
+                createRound(span, 60, i, 200);
+                secondbox.appendChild(span);
+            }
+        };
+
+        //初始化
+        function init() {
+            let mydate = new Date();
+            initYear(mydate.getFullYear())
+            initMonth()
+            initDate()
+            initHour()
+            initMinute()
+            initSecond()
+        }
+        //添加active
+        function addActive(tag) {
+            tag.className = "active"
+            let parent = tag.parentNode;
+            let childs = parent.children;
+            let sibling = []
+            for (let i = 0; i < childs.length; i++) {
+                if (childs[i] != tag) {
+                    sibling.push(childs[i])
+                }
+            }
+            sibling.forEach(item => item.className = '')
+            // console.log(sibling)
+
+        }
+        //当前时间
+        function showNow(mydate) {
+            let year = mydate.getFullYear();
+            let month = mydate.getMonth() - 1;
+            let date = mydate.getDate();
+            let hour = mydate.getHours();
+            let minute = mydate.getMinutes();
+            let second = mydate.getSeconds();
+
+            addActive(monthbox.children[month + 1]);
+            addActive(datebox.children[date - 1]);
+            addActive(hourbox.children[hour]);
+            addActive(minutebox.children[minute]);
+            addActive(secondbox.children[second]);
+
+        }
+
+        //当前时间旋转指定度数
+        function rotateTag(tag, deg) {
+            tag.style.transform = `rotate(${deg}deg)`
+        }
+        //运行
+        function runTime() {
+            init()
+            setInterval(function () {
+                let mydate = new Date();
+                showNow(mydate)
+                rotateTag(monthbox, -30 * mydate.getMonth())
+                rotateTag(datebox, -360 / 31 * (mydate.getDate() - 1))
+                rotateTag(hourbox, -360 / 24 * (mydate.getHours() - 1))
+                rotateTag(minutebox, -360 / 60 * (mydate.getMinutes() - 1))
+                rotateTag(secondbox, -360 / 60 * (mydate.getSeconds() - 1))
+            }, 1000)
+        }
+        runTime()
+    </script>
+</body>
+
+</html>
