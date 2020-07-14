@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./menu.js"></script>
+</head>
+<body>
+    
+    <script>
+
+      let menulist=["创建","复制","剪切","粘贴","删除"]
+      let menu,pre,cloneEle;
+      // Init.eleDrag()
+
+      replaceMenu()
+      function replaceMenu(){
+        createMenu();
+        document.addEventListener("contextmenu",showhandler);
+      }
+
+
+      function createMenu(){
+        menu=Init.createDom("ul",{
+          padding:0,
+          margin:0,
+          listStyle:"none",
+          position:"absolute",
+          cursor:"default",
+          zIndex:999,
+          display:"none"
+        })
+        for(let i=0;i<menulist.length;i++){
+          let li=Init.createDom("li",{
+            padding:"10px 20px",
+            background:"rgba(100,100,254,0.4)"
+          },menu)
+          li.textContent=menulist[i];
+        }
+      }
+
+      function showhandler(e){
+        if(!menu) return;
+        e.preventDefault();
+
+        menu.style.display="block";
+        menu.style.left=e.x+"px";
+        menu.style.top=e.y+"px";
+
+        menu.addEventListener("mouseover",mousehandler);
+        menu.addEventListener("mouseout",mousehandler);
+        menu.addEventListener("mouseleave",mousehandler);
+        menu.addEventListener("click",mousehandler);
+      }
+
+      function mousehandler(e){
+        if(e.type==="mouseleave")menu.style.display="none";
+        if(e.target.constructor===HTMLUListElement)return;
+        //没选到li时不继续执行
+        switch (e.type) {
+          case "mouseover":
+            e.target.style.backgroundColor="rgba(100,100,254,0.8)";
+          break;
+          case "mouseout":
+            e.target.style.backgroundColor="rgba(100,100,254,0.4)";
+          break;
+          case "click":
+            selectEle(e.target.textContent,e);
+          break;
+        }
+      }
+      function selectEle(option,e){
+        let num=menulist.indexOf(e.target.textContent);
+        switch (num){
+          case 0:
+            createBox(e);
+          break;
+          case 1:
+            if(!pre)return;//如果不存在，则不复制
+            cloneEle=pre.cloneNode(false); //复制元素
+          break;
+          case 2:
+            cloneEle=pre.cloneNode(false); 
+            //剪切元素*e.CloneNode(false)为复制元素方法：
+            // 如果传递给它的参数是 true，它还将递归复制当前节点的所有子孙节点。//  否则，它只复制当前节点。*
+            removeELe(pre);//删除该元素及其点击事件
+          break;
+          case 3:
+            if(!cloneEle) return;
+            document.body.appendChild(cloneEle);//粘贴复制或剪切元素
+            cloneEle.style.left=e.x-25+"px";//重新定位该元素
+            cloneEle.style.top=e.y-25+"px";
+            cloneEle.style.border="none";
+            cloneEle.addEventListener("click",clickhandler);//并添加点击事件
+          break;
+          case 4:
+            removeELe(pre);//删除该元素及其点击事件
+          break;
+                
+        }
+      }
+      function createBox(e){
+        let ele=Init.createDom("div",{
+                  width:"50px",
+                  height:"50px",
+                  position:"absolute",
+                  background:Init.randomColor(Init.randomNum(0.4,1))
+                });
+                ele.style.left=e.x-25+"px";
+                ele.style.top=e.y-25+"px";
+                ele.addEventListener("click",clickhandler)
+      }
+
+      function clickhandler(e){
+        selectBox(e.target)
+        Init.eleDrag(e.target)
+      }
+      function selectBox(ele){
+        if(pre) pre.style.border="none";
+        if(pre=ele) pre.style.border="1px solid #000";
+      }
+
+      function removeELe(ele){
+        if(!ele) return;
+        Init.removeDrag(ele);
+        ele.removeEventListener("click",clickhandler);
+        ele.remove();
+        ele=null;
+      }
+    </script>
+</body>
+</html>
