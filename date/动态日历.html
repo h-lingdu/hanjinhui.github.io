@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .datepicker {
+        width: 210px;
+        height: 240px;
+        margin: 50px auto;
+        background-color: #0b333f;
+        color: #ffffff;
+      }
+
+      .datepicker-header {
+        width: 210px;
+        height: 30px;
+      }
+
+      .datepicker-header span {
+        float: left;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+      }
+
+      .datepicker-header .header-left,
+      .datepicker-header .header-right {
+        width: 20%;
+      }
+
+      .header-middle {
+        width: 60%;
+      }
+
+      .datepicker-th {
+        width: 210px;
+        height: 30px;
+      }
+
+      .datepicker-th li {
+        float: left;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+      }
+
+      .datepicker-content {
+        height: 180px;
+        width: 210px;
+      }
+
+      .datepicker-content li {
+        float: left;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+      }
+
+      .nextMonth {
+        color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="datepicker">
+      <div class="datepicker-header">
+        <span class="header-left" id="prev">上</span>
+        <span class="header-middle" id="middle">2018年5月</span>
+        <span class="header-right" id="next">下</span>
+      </div>
+      <ul class="datepicker-th">
+        <li>一</li>
+        <li>二</li>
+        <li>三</li>
+        <li>四</li>
+        <li>五</li>
+        <li>六</li>
+        <li>日</li>
+      </ul>
+      <ul class="datepicker-content" id="content"></ul>
+    </div>
+  </body>
+  <script src="date.js"></script>
+
+  <script>
+    //    var date = new Date();
+    //    alert(format(date, "yyyy年mm月dd"));
+    var content = document.getElementById("content");
+    var middle = document.getElementById("middle");
+    var prevBtn = document.getElementById("prev");
+    var nextBtn = document.getElementById("next");
+
+    var date = new Date();
+    var year = date.getFullYear(); // 2018
+    var month = date.getMonth() + 1; //5
+    createDatePicker(year, month);
+    prevBtn.onclick = function () {
+      month--;
+      createDatePicker(year, month);
+    };
+    nextBtn.onclick = function () {
+      month++;
+      createDatePicker(year, month);
+    };
+    function createDatePicker(year, month) {
+      var firstDayWeek = getFirstDayWeekByYearMonth(year, month); //上一个月有多少天
+      firstDayWeek = firstDayWeek == 0 ? 7 : firstDayWeek;
+      var days = getDaysByYearMonth(year, month); //当前月有多少天
+      var balanceDays = 42 - days - firstDayWeek + 1; //下一个月有多少天
+      var lastDays = prevMonthDays(year, month);
+      var date = new Date(year, month - 1);
+      middle.innerHTML =
+        date.getFullYear() + "年" + (date.getMonth() + 1) + "月";
+      var html = "";
+      for (var i = lastDays - firstDayWeek + 2; i <= lastDays; i++) {
+        //上一个月
+        html += "<li class='nextMonth'>" + i + "</li>";
+      }
+      for (var i = 1; i <= days; i++) {
+        //当前月
+        html += "<li>" + i + "</li>";
+      }
+      for (var i = 1; i <= balanceDays; i++) {
+        html += "<li class='nextMonth'>" + i + "</li>";
+      }
+      content.innerHTML = html;
+    }
+  </script>
+</html>
